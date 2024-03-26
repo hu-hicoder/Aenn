@@ -2,12 +2,19 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import Markdown from 'react-markdown'
+import rehypeKatex from 'rehype-katex'
+import remarkMath from 'remark-math'
 
 function App() {
   const [count, setCount] = useState(0)
-
+  const markdown = `# Hi, *Pluto*! 
+  The lift coefficient ($C_L$) is a dimensionless coefficient.
+  $ m a = F $`
   return (
     <>
+      <Markdown remarkPlugins={[remarkMath]} rehypePlugins={[rehypeKatex]}>{markdown}</Markdown>
+      <></>
       <div>
         <a href="https://vitejs.dev" target="_blank">
           <img src={viteLogo} className="logo" alt="Vite logo" />
