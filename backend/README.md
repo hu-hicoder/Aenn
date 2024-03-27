@@ -1,18 +1,30 @@
 # Aenn backend
 
-## 設定
+Aennのバックエンド
+
+## 初期設定
+
+1. Mysqlのインストール
+2. sqlxのコマンドラインをインストール
 
 ```bash
-go run main.go
+cargo install sqlx-cli --no-default-features --features mysql
 ```
-でサーバーの起動
+
+3. `.env`ファイルを作成し、次のように書き込む。[]の中は自分の環境に合わせて書き換える
+
+```.env
+DATABASE_URL=mysql://[user]:[password]@[host]:[port]/Aenn
+```
+
+4. databaseの作成
 
 ```bash
-curl http://localhost:8080/hello
+sqlx db create
 ```
 
-もしくはブラウザで
+5. Rustの実行
 
-http://localhost:8080/hello
-
-で検索
+```bash
+cargo run
+```
