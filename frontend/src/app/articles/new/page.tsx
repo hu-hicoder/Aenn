@@ -48,6 +48,7 @@ export default function CreateArticle() {
             value={content}
             onChange={(e) => setContent(e.target.value)}
           />
+
           <Button
             type="submit"
             color="white"

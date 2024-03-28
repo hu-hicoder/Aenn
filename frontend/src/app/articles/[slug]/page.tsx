@@ -5,6 +5,7 @@ import ArticleContent from "./ArticleContent";
 import Comments from "./Comments";
 import { Heading } from "../../common/components";
 import LoadingComments from "./LoadingComments";
+// import LatexToHtmlConverter from "../../LatexToHtmlConverter";
 
 const getArticle = async (slug: string) => {
   const res = await fetch(`http://localhost:3000/api/articles/${slug}`, {
@@ -53,6 +54,7 @@ export default async function ArticleDetail({
   return (
     <div>
       <ArticleContent article={article} />
+
       <Heading as="h2" mt={8} mb={4}>
         Comments
       </Heading>
