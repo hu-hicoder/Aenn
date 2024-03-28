@@ -14,11 +14,11 @@ async function getArticles() {
     throw new Error("Failed to fetch articles");
   }
 
-  const hey = await fetch("http://127.0.0.1:8080/hey");
-  if (!hey.ok) {
-    throw new Error("Failed to fetch hey");
-  }
-  console.log(await hey.text()); // レスポンスボディをテキストとして読み込む
+  // const hey = await fetch("http://127.0.0.1:8080/hey");
+  // if (!hey.ok) {
+  //   throw new Error("Failed to fetch hey");
+  // }e
+  // console.log(await hey.text()); // レスポンスボディをテキストとして読み込む
 
   const data = await res.json();
   return data.articles as Article[];

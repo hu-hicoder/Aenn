@@ -1,6 +1,9 @@
-use sqlx::mysql::MySqlPool;
+use actix_web::{get, web, HttpResponse, Responder};
+use sqlx::mysql::MySql;
+use sqlx::Pool;
 
-pub async fn add_init(pool: &MySqlPool) -> anyhow::Result<()> {
+/// データベースの初期化
+pub async fn init_db(pool: &Pool<MySql>) -> anyhow::Result<()> {
     // Create articles table
     sqlx::query(
         r#"
@@ -46,4 +49,19 @@ pub async fn add_init(pool: &MySqlPool) -> anyhow::Result<()> {
     .await?;
 
     Ok(())
+}
+
+#[get("/hey")]
+pub async fn hey() -> impl Responder {
+    HttpResponse::Ok().body("Hey there!")
+}
+
+#[get("/")]
+pub async fn index() -> impl Responder {
+    HttpResponse::Ok().body("Hello world!")
+}
+
+pub fn config(conf: &mut web::ServiceConfig) {
+    let scope = web::scope("/api").service(hey).service(index);
+    conf.service(scope);
 }

@@ -1,42 +1,47 @@
+use actix_web::{web, App, HttpServer};
+use dotenv::dotenv;
+use sqlx::mysql::{MySqlPool, MySqlPoolOptions};
 use std::env;
 
-use actix_web::{get, post, web, App, HttpResponse, HttpServer, Responder};
-use dotenv::dotenv;
-use sqlx::mysql::MySqlPool;
 mod db;
+mod types;
 
-#[get("/")]
-async fn hello() -> impl Responder {
-    HttpResponse::Ok().body("Hello world!")
+pub struct AppState {
+    db: MySqlPool,
 }
 
-#[post("/echo")]
-async fn echo(req_body: String) -> impl Responder {
-    HttpResponse::Ok().body(req_body)
-}
-
-async fn manual_hello() -> impl Responder {
-    HttpResponse::Ok().body("Hey there!")
-}
-
-// http://127.0.0.1:8080/hey
+// http://localhost:8080/api/hey
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
     dotenv().ok();
-    let pool = MySqlPool::connect(&env::var("DATABASE_URL").expect("DATABASE_URL must be set"))
+    let database_url = env::var("DATABASE_URL").expect("DATABASE_URLを設定してください");
+    let pool = match MySqlPoolOptions::new()
+        .max_connections(7)
+        .connect(&database_url)
         .await
-        .expect("Failed to create pool");
+    {
+        Ok(pool) => {
+            println!("⭕ データベースに接続しました");
+            pool
+        }
+        Err(err) => {
+            println!("⛔ データベースに接続できませんでした: {:?}", err);
+            std::process::exit(1); // 異常終了
+        }
+    };
+    println!("🖥 サーバーが起動しました。");
 
-    db::add_init(&pool).await.expect("Failed to create table");
+    db::init_db(&pool)
+        .await
+        .expect("⛔ データベースの初期化に失敗しました");
 
-    HttpServer::new(|| {
+    HttpServer::new(move || {
         App::new()
-            .service(hello)
-            .service(echo)
-            .route("/hey", web::get().to(manual_hello))
+            .app_data(web::Data::new(AppState { db: pool.clone() }))
+            .configure(db::config)
     })
-    .bind(("127.0.0.1", 8080))?
+    .bind(("localhost", 8080))?
     .run()
     .await
 }
