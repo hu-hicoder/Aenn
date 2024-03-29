@@ -3,7 +3,7 @@ import ArticleList from "./ArticleList";
 import { Heading } from "./common/components";
 
 async function getArticles() {
-  const res = await fetch("http://localhost:3000/api/articles", {
+  const res = await fetch("http://localhost:8080/api/articles", {
     cache: "no-store",
   });
 
@@ -13,12 +13,6 @@ async function getArticles() {
   if (!res.ok) {
     throw new Error("Failed to fetch articles");
   }
-
-  // const hey = await fetch("http://127.0.0.1:8080/hey");
-  // if (!hey.ok) {
-  //   throw new Error("Failed to fetch hey");
-  // }e
-  // console.log(await hey.text()); // レスポンスボディをテキストとして読み込む
 
   const data = await res.json();
   return data.articles as Article[];

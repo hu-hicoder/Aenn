@@ -122,10 +122,7 @@ async fn get_article(path: web::Path<uuid::Uuid>, data: web::Data<AppState>) -> 
         .await;
 
     match result {
-        Ok(article) => {
-            // println!("{:?}", json!(article));
-            HttpResponse::Ok().json(json!(article))
-        }
+        Ok(article) => HttpResponse::Ok().json(json!(article)),
         Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
     }
 }
@@ -152,10 +149,7 @@ async fn get_comments(path: web::Path<uuid::Uuid>, data: web::Data<AppState>) ->
             .await;
 
             match comments_result {
-                Ok(comments) => {
-                    println!("{}", json!({"comments": comments}));
-                    HttpResponse::Ok().json(json!(comments))
-                }
+                Ok(comments) => HttpResponse::Ok().json(json!(comments)),
                 Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
             }
         }
