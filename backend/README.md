@@ -23,8 +23,28 @@ DATABASE_URL=mysql://[user]:[password]@[host]:[port]/Aenn
 sqlx db create
 ```
 
-5. Rustの実行
+5. mysqlでuserにarticlesの挿入と選択の権限の付与
+
+```bash
+mysql> GRANT SELECT ON Aenn.articles TO '[user]'@'[host]';
+mysql> GRANT INSERT ON Aenn.articles TO '[user]'@'[host]';
+mysql> FLUSH PRIVILEGES;
+```
+
+6. Rustの実行
 
 ```bash
 cargo run
+```
+
+7. (初期データを入れる場合)のArticleの挿入
+
+```bash
+mysql> USE Aenn
+```
+
+init_dataset.txtの中身の実行
+
+```bash
+mysql> SELECT * FROM articles;
 ```

@@ -10,7 +10,7 @@ pub struct AppState {
     db: MySqlPool,
 }
 
-// http://localhost:8080/api/hey
+// http://localhost:8080/api/articles
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
