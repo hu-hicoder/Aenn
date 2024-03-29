@@ -1,4 +1,5 @@
-use actix_web::{web, App, HttpServer};
+use actix_cors::Cors;
+use actix_web::{http::header, middleware, web, App, HttpServer};
 use dotenv::dotenv;
 use sqlx::mysql::{MySqlPool, MySqlPoolOptions};
 use std::env;
@@ -37,9 +38,19 @@ async fn main() -> std::io::Result<()> {
         .expect("⛔ データベースの初期化に失敗しました");
 
     HttpServer::new(move || {
+        let cors = Cors::default()
+            .allowed_origin("http://localhost:3000")
+            .allowed_methods(vec!["GET", "POST"]) // "PATCH", "DELETE"
+            .allowed_headers(vec![
+                header::CONTENT_TYPE,
+                header::AUTHORIZATION,
+                header::ACCEPT,
+            ])
+            .supports_credentials();
         App::new()
             .app_data(web::Data::new(AppState { db: pool.clone() }))
             .configure(db::config)
+            .wrap(cors)
     })
     .bind(("localhost", 8080))?
     .run()
