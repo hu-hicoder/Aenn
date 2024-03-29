@@ -10,11 +10,21 @@ import {
   Textarea,
   Button,
 } from "../../common/components";
+import { TagsInput } from "../[slug]/TagsInput";
+import { Badge } from "../[slug]/Badg";
+import clsx from 'clsx';
+
+type TagsInputProps = React.ComponentPropsWithoutRef<'input'> & {
+  isError?: boolean
+  tags: string[]
+  onChangeTags?: (tags: string[]) => void
+}
 
 export default function CreateArticle() {
   const router = useRouter();
   const [title, setTitle] = useState("");
   const [content, setContent] = useState("");
+  const [tags, setTags] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [isPending, startTransition] = useTransition();
 
@@ -26,13 +36,14 @@ export default function CreateArticle() {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({ title, content }),
+      body: JSON.stringify({ title, content, tags }), // タグも送信する
     });
     router.push("/");
     startTransition(() => {
       router.refresh();
     });
   };
+
 
   return (
     <div>
@@ -49,6 +60,9 @@ export default function CreateArticle() {
             onChange={(e) => setContent(e.target.value)}
           />
 
+          <FormLabel>タグ</FormLabel>
+          <TagsInput tags={tags} onChangeTags={(newTags) => { setTags(newTags)} } /> 
+
           <Button
             type="submit"
             color="white"
@@ -63,3 +77,4 @@ export default function CreateArticle() {
     </div>
   );
 }
+
