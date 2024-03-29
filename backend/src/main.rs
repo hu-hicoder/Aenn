@@ -1,5 +1,5 @@
 use actix_cors::Cors;
-use actix_web::{http::header, middleware, web, App, HttpServer};
+use actix_web::{http::header, web, App, HttpServer};
 use dotenv::dotenv;
 use sqlx::mysql::{MySqlPool, MySqlPoolOptions};
 use std::env;

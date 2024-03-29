@@ -80,11 +80,11 @@ async fn get_articles(data: web::Data<AppState>) -> impl Responder {
 /// POST /api/articles
 /// 新規記事を作成する
 /// テスト:
-/// ```
+/// ``
 /// curl -X POST http://localhost:8080/api/articles \
 ///      -H "Content-Type: application/json" \
 ///      -d '{"title": "記事のタイトル", "content": "記事の内容"}'
-/// ```
+/// ``
 #[post("/articles")]
 async fn post_article(body: web::Json<CreateArticle>, data: web::Data<AppState>) -> impl Responder {
     let slug = uuid::Uuid::new_v4().to_string();
@@ -112,17 +112,29 @@ async fn post_article(body: web::Json<CreateArticle>, data: web::Data<AppState>)
     }
 }
 
+/// GET /api/articles/{slug}
+/// 特定の記事を取得する
 #[get("/articles/{slug}")]
-async fn get_article() -> impl Responder {
-    HttpResponse::Ok().json(json!(
-{"article":{"id":11,"title":"dgdas","slug":"68ce7260-0c97-4490-bfcd-f2227a12b74c","content":"esag","createdAt":"2024-03-27T08:47:10.837Z","updatedAt":"2024-03-27T08:47:10.837Z"}}
-    ))
+async fn get_article(path: web::Path<uuid::Uuid>, data: web::Data<AppState>) -> impl Responder {
+    let slug = path.into_inner().to_string();
+    let result = sqlx::query_as!(Article, "SELECT * FROM articles WHERE slug = ?", slug)
+        .fetch_one(&data.db)
+        .await;
+
+    match result {
+        Ok(article) => {
+            // println!("{:?}", json!(article));
+            HttpResponse::Ok().json(json!(article))
+        }
+        Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
+    }
 }
 
 pub fn config(conf: &mut web::ServiceConfig) {
     let scope = web::scope("/api")
         .service(index)
         .service(get_articles)
-        .service(post_article);
+        .service(post_article)
+        .service(get_article);
     conf.service(scope);
 }
