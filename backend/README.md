@@ -28,6 +28,8 @@ sqlx db create
 ```bash
 mysql> GRANT SELECT ON Aenn.articles TO '[user]'@'[host]';
 mysql> GRANT INSERT ON Aenn.articles TO '[user]'@'[host]';
+mysql> GRANT SELECT ON Aenn.comments TO '[user]'@'[host]';
+mysql> GRANT INSERT ON Aenn.comments TO '[user]'@'[host]';
 mysql> FLUSH PRIVILEGES;
 ```
 

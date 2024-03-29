@@ -5,7 +5,7 @@ use sqlx::mysql::MySql;
 use sqlx::Pool;
 
 use crate::{
-    types::{Article, CreateArticle},
+    types::{Article, Comment, CreateArticle},
     AppState,
 };
 
@@ -30,7 +30,7 @@ pub async fn init_db(pool: &Pool<MySql>) -> anyhow::Result<()> {
     // Create author table
     sqlx::query(
         r#"
-        CREATE TABLE IF NOT EXISTS author (
+        CREATE TABLE IF NOT EXISTS authors (
             name VARCHAR(255) NOT NULL,
             avatarUrl VARCHAR(255) NOT NULL
         )
@@ -130,11 +130,45 @@ async fn get_article(path: web::Path<uuid::Uuid>, data: web::Data<AppState>) -> 
     }
 }
 
+/// GET /api/articles/{slug}/comments
+/// コメントの取得
+#[get("/articles/{slug}/comments")]
+async fn get_comments(path: web::Path<uuid::Uuid>, data: web::Data<AppState>) -> impl Responder {
+    let slug = path.into_inner().to_string();
+
+    let article_result = sqlx::query_as!(Article, "SELECT * FROM articles WHERE slug = ?", slug)
+        .fetch_one(&data.db)
+        .await;
+
+    // ToDo:
+    match article_result {
+        Ok(article) => {
+            let comments_result = sqlx::query_as!(
+                Comment,
+                "SELECT * FROM comments WHERE article_id = ?",
+                article.id
+            )
+            .fetch_all(&data.db)
+            .await;
+
+            match comments_result {
+                Ok(comments) => {
+                    println!("{}", json!({"comments": comments}));
+                    HttpResponse::Ok().json(json!(comments))
+                }
+                Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
+            }
+        }
+        Err(_) => HttpResponse::InternalServerError().body("記事が見つかりませんでした。"),
+    }
+}
+
 pub fn config(conf: &mut web::ServiceConfig) {
     let scope = web::scope("/api")
         .service(index)
         .service(get_articles)
         .service(post_article)
-        .service(get_article);
+        .service(get_article)
+        .service(get_comments);
     conf.service(scope);
 }
