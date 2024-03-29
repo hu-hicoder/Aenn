@@ -21,7 +21,7 @@ export default function CreateArticle() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setLoading(true);
-    await fetch("/api/articles", {
+    await fetch("http://localhost:8080/api/articles", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
