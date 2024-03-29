@@ -1,62 +1,11 @@
 use actix_web::{get, post, web, HttpResponse, Responder};
 use chrono::NaiveDateTime;
 use serde_json::json;
-use sqlx::mysql::MySql;
-use sqlx::Pool;
 
 use crate::{
     types::{Article, Comment, CreateArticle},
     AppState,
 };
-
-/// データベースの初期化
-pub async fn init_db(pool: &Pool<MySql>) -> anyhow::Result<()> {
-    // Create articles table
-    sqlx::query(
-        r#"
-        CREATE TABLE IF NOT EXISTS articles (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            title VARCHAR(255) NOT NULL,
-            content TEXT NOT NULL,
-            slug VARCHAR(255) NOT NULL,
-            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
-        )
-        "#,
-    )
-    .execute(pool)
-    .await?;
-
-    // Create author table
-    sqlx::query(
-        r#"
-        CREATE TABLE IF NOT EXISTS authors (
-            name VARCHAR(255) NOT NULL,
-            avatarUrl VARCHAR(255) NOT NULL
-        )
-        "#,
-    )
-    .execute(pool)
-    .await?;
-
-    // Create comments table
-    sqlx::query(
-        r#"
-        CREATE TABLE IF NOT EXISTS comments (
-            id INT AUTO_INCREMENT PRIMARY KEY,
-            body TEXT NOT NULL,
-            article_id INT NOT NULL,
-            created_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            updated_at DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-            author VARCHAR(255) NOT NULL
-        )
-        "#,
-    )
-    .execute(pool)
-    .await?;
-
-    Ok(())
-}
 
 #[get("/")]
 async fn index() -> impl Responder {
@@ -152,10 +101,7 @@ async fn get_comments(path: web::Path<uuid::Uuid>, data: web::Data<AppState>) ->
             .await;
 
             match comments_result {
-                Ok(comments) => {
-                    println!("{}", json!({"comments": comments}));
-                    HttpResponse::Ok().json(json!(comments))
-                }
+                Ok(comments) => HttpResponse::Ok().json(json!(comments)),
                 Err(err) => HttpResponse::InternalServerError().body(err.to_string()),
             }
         }

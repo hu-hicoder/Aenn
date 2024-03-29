@@ -33,10 +33,6 @@ async fn main() -> std::io::Result<()> {
     };
     println!("🖥 サーバーが起動しました。");
 
-    db::init_db(&pool)
-        .await
-        .expect("⛔ データベースの初期化に失敗しました");
-
     HttpServer::new(move || {
         let cors = Cors::default()
             .allowed_origin("http://localhost:3000")

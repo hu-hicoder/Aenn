@@ -17,20 +17,19 @@ cargo install sqlx-cli --no-default-features --features mysql
 DATABASE_URL=mysql://[user]:[password]@[host]:[port]/Aenn
 ```
 
-4. databaseの作成
+4. mysqlでuserにarticlesの挿入と選択の権限の付与(面倒だったので、権限をすべて渡しており注意)
 
 ```bash
-sqlx db create
+> sudo mysql -u root
+mysql> GRANT INSERT, SELECT, UPDATE, DELETE, DROP ON *.* TO '[user]'@'[host]';
+mysql> FLUSH PRIVILEGES;
 ```
 
-5. mysqlでuserにarticlesの挿入と選択の権限の付与
+5. データベースとテーブルの作成
 
-```bash
-mysql> GRANT SELECT ON Aenn.articles TO '[user]'@'[host]';
-mysql> GRANT INSERT ON Aenn.articles TO '[user]'@'[host]';
-mysql> GRANT SELECT ON Aenn.comments TO '[user]'@'[host]';
-mysql> GRANT INSERT ON Aenn.comments TO '[user]'@'[host]';
-mysql> FLUSH PRIVILEGES;
+```
+> sqlx db create
+> sqlx migrate run
 ```
 
 6. Rustの実行
@@ -39,14 +38,12 @@ mysql> FLUSH PRIVILEGES;
 cargo run
 ```
 
-7. (初期データを入れる場合)のArticleの挿入
+## 初期データの削除
+
+初期データを入れたくなかったら、migrationsファイルのINSERTを除く
+
+## データベースの削除
 
 ```bash
-mysql> USE Aenn
-```
-
-init_dataset.txtの中身の実行
-
-```bash
-mysql> SELECT * FROM articles;
+sqlx db drop
 ```
