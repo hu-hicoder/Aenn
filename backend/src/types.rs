@@ -10,6 +10,8 @@ pub struct Article {
     pub title: String,
     pub content: String,
     pub slug: String,
+    pub user_id: i32,
+    pub subcategory_id: Option<i32>,
     pub created_at: NaiveDateTime,
     pub updated_at: NaiveDateTime,
 }
@@ -19,17 +21,4 @@ pub struct Article {
 pub struct CreateArticle {
     pub title: String,
     pub content: String,
-}
-
-// Comment
-
-#[derive(Debug, Serialize, Deserialize, sqlx::FromRow)]
-#[allow(non_snake_case)]
-pub struct Comment {
-    pub id: i32,
-    pub body: String,
-    pub article_id: i32,
-    pub created_at: NaiveDateTime,
-    pub updated_at: NaiveDateTime,
-    pub author: String,
 }

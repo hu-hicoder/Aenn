@@ -11,6 +11,8 @@ pub struct AppState {
     db: MySqlPool,
 }
 
+mod article;
+
 // http://localhost:8080/api/articles
 
 #[actix_web::main]
