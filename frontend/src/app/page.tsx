@@ -3,7 +3,7 @@ import ArticleList from "./ArticleList";
 import { Heading } from "./common/components";
 
 async function getArticles() {
-  const res = await fetch("http://localhost:3000/api/articles", {
+  const res = await fetch("http://localhost:8080/api/articles", {
     cache: "no-store",
   });
 

@@ -13,7 +13,7 @@ export default async function handler(
     await delay(1500);
     const articles = JSON.parse(fs.readFileSync("articles.json", "utf8"));
     articles.articles.sort((a: any, b: any) => {
-      return new Date(b.createdAt).valueOf() - new Date(a.createdAt).valueOf();
+      return new Date(b.created_at).valueOf() - new Date(a.created_at).valueOf();
     });
     res.status(200).json(articles);
   } else if (req.method === "POST") {
@@ -28,8 +28,8 @@ export default async function handler(
       title,
       slug,
       content,
-      createdAt: date,
-      updatedAt: date,
+      created_at: date,
+      updated_at: date,
     };
     articles.articles.push(newArticle);
     fs.writeFileSync("articles.json", JSON.stringify(articles));
