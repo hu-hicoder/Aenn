@@ -4,14 +4,12 @@ use dotenv::dotenv;
 use sqlx::mysql::{MySqlPool, MySqlPoolOptions};
 use std::env;
 
-mod db;
+mod articles;
 mod types;
 
 pub struct AppState {
     db: MySqlPool,
 }
-
-mod article;
 
 // http://localhost:8080/api/articles
 
@@ -47,7 +45,7 @@ async fn main() -> std::io::Result<()> {
             .supports_credentials();
         App::new()
             .app_data(web::Data::new(AppState { db: pool.clone() }))
-            .configure(db::config)
+            .configure(articles::config)
             .wrap(cors)
     })
     .bind(("localhost", 8080))?
