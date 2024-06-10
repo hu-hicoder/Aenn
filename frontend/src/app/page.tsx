@@ -7,21 +7,12 @@ async function getArticles() {
     cache: "no-store",
   });
 
-  // throw new Error("Failed to fetch articles");
-
-  // エラーハンドリングを行うことが推奨されている
   if (!res.ok) {
     throw new Error("Failed to fetch articles");
   }
 
-  // const hey = await fetch("http://127.0.0.1:8080/hey");
-  // if (!hey.ok) {
-  //   throw new Error("Failed to fetch hey");
-  // }e
-  // console.log(await hey.text()); // レスポンスボディをテキストとして読み込む
-
   const data = await res.json();
-  return data.articles as Article[];
+  return data as Article[];
 }
 
 export default async function Home() {
